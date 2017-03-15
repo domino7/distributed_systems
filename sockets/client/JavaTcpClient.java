@@ -17,6 +17,7 @@ public class JavaTcpClient {
     Scanner scanner = new Scanner(System.in);
     PrintWriter out;
     //BufferedReader in;
+    private boolean clientActive;
 
 
     public static void main(String[] args) throws IOException {
@@ -27,18 +28,20 @@ public class JavaTcpClient {
         int portNumber = 12345;
         Socket socket = null;
         
+        
         try {
             // create socket 
             socket = new Socket(hostName, portNumber);
             cl.out = new PrintWriter(socket.getOutputStream(), true);
+            cl.clientActive = true;
             
             cl.getNick();
             cl.out.println(cl.nick);
             //String response = cl.in.readLine();
             //System.out.println(response);
-            new ClientMessageReader(socket).start();
+            new ClientMessageReader(cl, socket).start();
                     
-            while (true){   
+            while (cl.clientActive){   
 
                 // send msg, read response
                 cl.sendMessage();
@@ -67,6 +70,8 @@ public class JavaTcpClient {
         out.println(msg);
     }
 
-    
+    public void clientDisactive(){
+        this.clientActive = false;
+    }
     
 }

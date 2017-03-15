@@ -16,8 +16,10 @@ class ClientMessageReader extends Thread {
     private Socket socket;
     private BufferedReader in;
     private boolean clientActive;
+    private JavaTcpClient cl;
     
-    public ClientMessageReader(Socket socket) {
+    public ClientMessageReader(JavaTcpClient cl, Socket socket) {
+        this.cl = cl;
         this.socket = socket;
         this.clientActive = true;
         try {  
@@ -33,6 +35,7 @@ class ClientMessageReader extends Thread {
             res = in.readLine();
             if (res.equals("exit")){
                 clientActive = false;
+                cl.clientDisactive();
                 socket.close();
             } else {
                 System.out.println(res);

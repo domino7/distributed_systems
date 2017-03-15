@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
 public class JavaTcpServer {
     
     ServerSocket serverSocket = null;
+    DatagramSocket dSocket = null; 
     int portNumber = 12345;
     private ArrayList<ClientConnection> clientList;
     private boolean serverIsRunning;
@@ -46,7 +48,10 @@ public class JavaTcpServer {
         try {
             // create socket
             sr.serverSocket = new ServerSocket(sr.portNumber);
-            System.out.println("JAVA TCP SERVER STARTED"); 
+            sr.dSocket = new DatagramSocket(sr.portNumber);
+            
+            System.out.println("JAVA SERVER STARTED"); 
+            
             sr.serverIsRunning = true;
             sr.listenForClients();
         } catch (IOException e) {            
