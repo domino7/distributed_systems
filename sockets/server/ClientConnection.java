@@ -39,7 +39,9 @@ public class ClientConnection extends Thread{
     
     private void closeSocket() {
         try {
+            sendMessage("exit");
             clientSocket.close();
+            System.out.println(userNick +" socket closed");
         } catch (IOException ex1) {
             Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex1);
         }  
@@ -51,10 +53,9 @@ public class ClientConnection extends Thread{
         out.println("Hello on chat, " + userNick);
         while(clientActive){
             msg = readMessage();
-            sr.sendOnChat(this.getId() , this.userNick + ": " + msg);
+            parseMessage(msg);
+            
         }
-
-        closeSocket();
   
     }
     
@@ -78,6 +79,34 @@ public class ClientConnection extends Thread{
 
     public void sendMessage(String msg) {
         out.println(msg);
+    }
+
+    private void parseMessage(String msg) {
+        if (msg.toLowerCase().equals("exit")){
+            clientActive = false;
+            closeSocket();
+        } else if (msg.equals("M")){
+            sendMessage("udp sending");
+            sendUdpMsg();
+        } else if(msg.equals("N")){
+            sendMessage("udp multicast sending");
+        } else {
+            sr.sendOnChat(this.getId() , this.userNick.toUpperCase() + ": " + msg);
+        }
+            
+    }
+
+    private void sendUdpMsg() {
+        prepareChannel();
+        sendAsciArt();
+    }
+
+    private void prepareChannel() {
+        
+    }
+
+    private void sendAsciArt() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

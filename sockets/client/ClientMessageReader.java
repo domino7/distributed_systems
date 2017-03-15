@@ -31,7 +31,12 @@ class ClientMessageReader extends Thread {
         String res;
         try {
             res = in.readLine();
-            System.out.println(res);
+            if (res.equals("exit")){
+                clientActive = false;
+                socket.close();
+            } else {
+                System.out.println(res);
+            }
         } catch (IOException ex) {
             Logger.getLogger(JavaTcpClient.class.getName()).log(Level.SEVERE, null, ex);
         }

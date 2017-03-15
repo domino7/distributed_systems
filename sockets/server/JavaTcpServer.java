@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,15 +20,15 @@ public class JavaTcpServer {
     private boolean serverIsRunning;
     
     private void listenForClients(){
+        ExecutorService executor = Executors.newFixedThreadPool(10);
         while(serverIsRunning){
         
             try {
                 Socket clientSocket = this.serverSocket.accept();
-
-                ClientConnection con = new ClientConnection(this, clientSocket);
-                con.start();
-                clientList.add(con);
-
+                Runnable con = new ClientConnection(this, clientSocket);
+                executor.execute(con);
+                clientList.add((ClientConnection) con);
+                
             } catch (IOException ex) {
                 Logger.getLogger(JavaTcpServer.class.getName()).log(Level.SEVERE, null, ex);
             }
