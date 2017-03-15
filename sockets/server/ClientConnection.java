@@ -21,8 +21,10 @@ public class ClientConnection extends Thread{
     private BufferedReader in;
     private String userNick;
     private boolean clientActive;
+    private JavaTcpServer sr;
     
-    public ClientConnection(Socket clientSocket) {
+    public ClientConnection(JavaTcpServer sr, Socket clientSocket) {
+        this.sr = sr;
         this.clientSocket = clientSocket;
         clientActive = true;
         try {
@@ -49,7 +51,7 @@ public class ClientConnection extends Thread{
         out.println("Hello on chat, " + userNick);
         while(clientActive){
             msg = readMessage();
-            sendMessage(msg);
+            sr.sendOnChat(this.getId() , this.userNick + ": " + msg);
         }
 
         closeSocket();
@@ -74,8 +76,8 @@ public class ClientConnection extends Thread{
         
     }
 
-    private void sendMessage(String msg) {
-        out.println(userNick + ": " + msg);
+    public void sendMessage(String msg) {
+        out.println(msg);
     }
     
 }

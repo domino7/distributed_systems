@@ -15,17 +15,21 @@ public class JavaTcpServer {
     ServerSocket serverSocket = null;
     int portNumber = 12345;
     private ArrayList<ClientConnection> clientList;
+    private boolean serverIsRunning;
     
     private void listenForClients(){
-        try {
-            Socket clientSocket = this.serverSocket.accept();
-            
-            ClientConnection con = new ClientConnection(clientSocket);
-            con.start();
-            clientList.add(con);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(JavaTcpServer.class.getName()).log(Level.SEVERE, null, ex);
+        while(serverIsRunning){
+        
+            try {
+                Socket clientSocket = this.serverSocket.accept();
+
+                ClientConnection con = new ClientConnection(this, clientSocket);
+                con.start();
+                clientList.add(con);
+
+            } catch (IOException ex) {
+                Logger.getLogger(JavaTcpServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -41,18 +45,22 @@ public class JavaTcpServer {
             // create socket
             sr.serverSocket = new ServerSocket(sr.portNumber);
             System.out.println("JAVA TCP SERVER STARTED"); 
-            
-            while(true){
-                
-                sr.listenForClients();
-       
-            }
+            sr.serverIsRunning = true;
+            sr.listenForClients();
         } catch (IOException e) {            
             e.printStackTrace();
         }
         finally{
             if (sr.serverSocket != null){
                 sr.serverSocket.close();
+            }
+        }
+    }
+
+    void sendOnChat(long id, String msg) {
+        for(ClientConnection cc: clientList){
+            if (cc.getId() != id){
+                cc.sendMessage(msg);
             }
         }
     }

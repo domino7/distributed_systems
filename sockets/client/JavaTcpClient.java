@@ -16,7 +16,7 @@ public class JavaTcpClient {
     String nick;
     Scanner scanner = new Scanner(System.in);
     PrintWriter out;
-    BufferedReader in;
+    //BufferedReader in;
 
 
     public static void main(String[] args) throws IOException {
@@ -31,18 +31,18 @@ public class JavaTcpClient {
             // create socket 
             socket = new Socket(hostName, portNumber);
             cl.out = new PrintWriter(socket.getOutputStream(), true);
-            cl.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));  
             
             cl.getNick();
             cl.out.println(cl.nick);
-            String response = cl.in.readLine();
-            System.out.println(response);
-            
+            //String response = cl.in.readLine();
+            //System.out.println(response);
+            new ClientMessageReader(socket).start();
+                    
             while (true){   
 
                 // send msg, read response
                 cl.sendMessage();
-                cl.readMessage();
+                //cl.readMessage();
 
             }
             
@@ -67,14 +67,6 @@ public class JavaTcpClient {
         out.println(msg);
     }
 
-    private void readMessage() {
-        String res;
-        try {
-            res = in.readLine();
-            System.out.println(res);
-        } catch (IOException ex) {
-            Logger.getLogger(JavaTcpClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    
     
 }
